@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+venv/
+.venv/
+env/
+.env
+*.env.local
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML model artifacts (large files)
+models/*.pkl
+models/*.onnx
+models/*.joblib
+training/data/*.csv
+training/data/*.parquet
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Docker
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Secrets (never commit these)
+*.pem
+*.key
+*.cert
+private_key.pem
+public_key.pem

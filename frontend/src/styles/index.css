@@ -1,0 +1,208 @@
+/*
+ * SentinelAI — Global CSS Design System
+ * ─────────────────────────────────────────────────────────────────────────────
+ * All visual decisions (colours, spacing, typography, shadows) are defined
+ * here as CSS custom properties (design tokens).
+ *
+ * Rule: Never use raw colour hex codes or pixel values in component CSS.
+ *       Always reference a token from this file.
+ *
+ * Structure:
+ *   1. CSS Reset
+ *   2. Design Tokens (Dark Theme)
+ *   3. Typography Scale
+ *   4. Base Element Styles
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ── 1. CSS Reset ─────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* ── 2. Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* ── Colour Palette ── */
+  /* Background layers */
+  --color-bg-base:        #0a0c12;   /* Deepest background */
+  --color-bg-surface:     #0f1117;   /* Card / panel background */
+  --color-bg-elevated:    #161923;   /* Elevated surface (modals, dropdowns) */
+  --color-bg-overlay:     #1e2230;   /* Input fields, hover states */
+
+  /* Brand — Electric Blue (primary action colour) */
+  --color-brand-primary:  #4f8ef7;
+  --color-brand-hover:    #6ba3ff;
+  --color-brand-active:   #3a7ae8;
+  --color-brand-muted:    rgba(79, 142, 247, 0.12);
+  --color-brand-glow:     rgba(79, 142, 247, 0.35);
+
+  /* Accent — Violet (secondary / SHAP charts) */
+  --color-accent:         #7c6af7;
+  --color-accent-muted:   rgba(124, 106, 247, 0.12);
+
+  /* Semantic */
+  --color-success:        #34d399;
+  --color-success-muted:  rgba(52, 211, 153, 0.12);
+  --color-warning:        #fbbf24;
+  --color-warning-muted:  rgba(251, 191, 36, 0.12);
+  --color-danger:         #f87171;
+  --color-danger-muted:   rgba(248, 113, 113, 0.12);
+  --color-info:           #60a5fa;
+  --color-info-muted:     rgba(96, 165, 250, 0.12);
+
+  /* Text */
+  --color-text-primary:   #f1f3f9;
+  --color-text-secondary: #9ca3af;
+  --color-text-muted:     #6b7280;
+  --color-text-inverse:   #0a0c12;
+
+  /* Borders */
+  --color-border:         rgba(255, 255, 255, 0.07);
+  --color-border-hover:   rgba(255, 255, 255, 0.14);
+  --color-border-focus:   var(--color-brand-primary);
+
+  /* ── Spacing Scale (4px base unit) ── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── Typography ── */
+  --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:   'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Font sizes (fluid-ready) */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+  --text-5xl:  3rem;       /* 48px */
+  --text-6xl:  3.75rem;    /* 60px */
+
+  /* Font weights */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-extrabold:800;
+  --fw-black:    900;
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-snug:   1.375;
+  --lh-normal: 1.5;
+  --lh-relaxed:1.625;
+
+  /* ── Borders ── */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-2xl: 24px;
+  --radius-full:9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-xl:  0 20px 60px rgba(0, 0, 0, 0.7);
+  --shadow-brand: 0 0 24px var(--color-brand-glow);
+
+  /* ── Transitions ── */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ── Layout ── */
+  --container-max: 1280px;
+  --navbar-height: 64px;
+}
+
+/* ── 3. Base Element Styles ───────────────────────────────────────────────── */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track  { background: var(--color-bg-surface); }
+::-webkit-scrollbar-thumb  { background: var(--color-bg-overlay); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* Text selection */
+::selection {
+  background-color: var(--color-brand-muted);
+  color: var(--color-brand-hover);
+}
+
+/* Focus ring — keyboard accessible, not shown on mouse click */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── 4. Utility Classes ───────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

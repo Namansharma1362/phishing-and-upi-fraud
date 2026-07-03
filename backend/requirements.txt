@@ -1,0 +1,32 @@
+# ============================================================
+#  SentinelAI Backend — Python Dependencies
+#  Pinned versions for reproducible builds
+# ============================================================
+
+# Web framework
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+
+# Database (async)
+sqlalchemy[asyncio]==2.0.31
+asyncpg==0.29.0
+alembic==1.13.1
+
+# Configuration
+pydantic-settings==2.3.4
+
+# Cache / Rate limiting
+redis[asyncio]==5.0.7
+
+# Structured logging
+structlog==24.2.0
+
+# HTTP client (for external checks in health/detection)
+httpx==0.27.0
+
+# File uploads
+python-multipart==0.0.9
+
+# Auth (Phase 2 — pre-declared for scaffold completeness)
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
