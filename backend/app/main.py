@@ -21,6 +21,7 @@ from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
 from app.db.session import engine
 from app.api.v1 import health as health_router
+from app.api.v1 import auth as auth_router
 
 settings = get_settings()
 
@@ -120,8 +121,10 @@ def create_application() -> FastAPI:
     # Health check at root level (no /api/v1 prefix — standard convention)
     app.include_router(health_router.router)
 
+    # Phase 2: Authentication
+    app.include_router(auth_router.router, prefix="/api/v1")
+
     # Future routers (added in later phases):
-    # app.include_router(auth_router.router,      prefix="/api/v1", tags=["Auth"])
     # app.include_router(detection_router.router, prefix="/api/v1", tags=["Detection"])
     # app.include_router(history_router.router,   prefix="/api/v1", tags=["History"])
 

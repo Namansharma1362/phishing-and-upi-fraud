@@ -8,13 +8,14 @@ import { Link } from "react-router-dom";
 import Button from "../components/common/Button";
 import Badge from "../components/common/Badge";
 
+import { useAuthStore } from "../store/authStore";
+
 export default function Dashboard() {
   useEffect(() => {
     document.title = "Dashboard — SentinelAI";
   }, []);
 
-  // Phase 2: replace with real auth check from Zustand store
-  const isAuthenticated = false;
+  const { isAuthenticated } = useAuthStore();
 
   if (!isAuthenticated) {
     return (

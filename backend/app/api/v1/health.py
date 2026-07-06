@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 import redis.asyncio as aioredis
 
-from app.api.deps import get_db_session
+from app.db.session import get_db
 from app.core.config import get_settings
 from app.core.logging import get_logger
 
@@ -33,7 +33,8 @@ settings = get_settings()
     summary="System Health Check",
     response_description="Service health status for all backend components",
 )
-async def health_check(db: AsyncSession = Depends(get_db_session)) -> dict:
+async def health_check(db: AsyncSession = Depends(get_db)) -> dict:
+
     """
     Verify connectivity to PostgreSQL and Redis.
 

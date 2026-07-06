@@ -11,6 +11,8 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Button from "../common/Button";
+import { useAuthStore } from "../../store/authStore";
+import { authAPI } from "../../api/client";
 
 const NAV_LINKS = [
   { to: "/",          label: "Home",        exact: true },
@@ -23,6 +25,16 @@ export default function Navbar() {
   const [scrolled, setScrolled]         = useState(false);
   const [menuOpen, setMenuOpen]         = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+    } finally {
+      logout();
+      navigate("/login");
+    }
+  };
 
   // ── Scroll listener ─────────────────────────────────────
   useEffect(() => {
@@ -69,24 +81,42 @@ export default function Navbar() {
 
         {/* ── Desktop Auth Actions ─────────────────────── */}
         <div className="navbar-actions">
-          <Button
-            as={Link}
-            to="/login"
-            variant="ghost"
-            size="sm"
-            id="navbar-login-btn"
-          >
-            Sign In
-          </Button>
-          <Button
-            as={Link}
-            to="/register"
-            variant="primary"
-            size="sm"
-            id="navbar-register-btn"
-          >
-            Get Started
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <span style={{ fontSize: "0.9rem", color: "var(--color-text-secondary)", marginRight: "8px" }}>
+                {user?.name || "User"}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                id="navbar-logout-btn"
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                as={Link}
+                to="/login"
+                variant="ghost"
+                size="sm"
+                id="navbar-login-btn"
+              >
+                Sign In
+              </Button>
+              <Button
+                as={Link}
+                to="/register"
+                variant="primary"
+                size="sm"
+                id="navbar-register-btn"
+              >
+                Get Started
+              </Button>
+            </>
+          )}
 
           {/* ── Mobile Hamburger ──────────────────────── */}
           <button
@@ -129,8 +159,25 @@ export default function Navbar() {
             </NavLink>
           ))}
           <div style={{ height: 1, background: "var(--color-border)", margin: "var(--space-2) 0" }} />
-          <Link to="/login"    className="navbar-nav-link" style={{ padding: "var(--space-3)" }}>Sign In</Link>
-          <Link to="/register" className="navbar-nav-link" style={{ padding: "var(--space-3)" }}>Get Started →</Link>
+          {isAuthenticated ? (
+            <>
+              <div style={{ padding: "var(--space-3)", color: "var(--color-text-secondary)" }}>
+                {user?.name || "User"}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="navbar-nav-link"
+                style={{ padding: "var(--space-3)", textAlign: "left", background: "none", border: "none", cursor: "pointer", fontSize: "1rem" }}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login"    className="navbar-nav-link" style={{ padding: "var(--space-3)" }}>Sign In</Link>
+              <Link to="/register" className="navbar-nav-link" style={{ padding: "var(--space-3)" }}>Get Started →</Link>
+            </>
+          )}
         </div>
       )}
     </header>
