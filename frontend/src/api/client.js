@@ -95,4 +95,8 @@ export const authAPI = {
   me: () => apiClient.get("/auth/me"),
 };
 
+export const scanAPI = {
+  scanURL: (data) => apiClient.post("/scan/url", data),
+};
+
 export default apiClient;
