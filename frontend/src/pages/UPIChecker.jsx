@@ -188,7 +188,12 @@ export default function UPIChecker() {
         upi_id: targetUpi,
         transaction_amount: targetAmount,
         transaction_hour: targetHour,
-        is_new_beneficiary: targetNewBen
+        is_new_beneficiary: targetNewBen,
+        device_changed: deviceChanged,
+        sim_swapped: simSwapped,
+        intl_login: intlLogin,
+        transaction_type: txType,
+        merchant_category: merchantCat
       });
       setResult({ ...response.data, timestamp: new Date().toLocaleString() });
     } catch (err) {
@@ -207,8 +212,8 @@ export default function UPIChecker() {
   const getClassificationStyles = (classification) => {
     switch (classification) {
       case "Safe": return { color: "green", text: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/20", icon: "✓", rec: "Proceed normally." };
-      case "Suspicious": return { color: "yellow", text: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20", icon: "⚠", rec: "Verify beneficiary before payment." };
-      case "Fraud": return { color: "red", text: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20", icon: "✕", rec: "Do not proceed. Contact your bank immediately." };
+      case "Suspicious": return { color: "yellow", text: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/20", icon: "⚠", rec: "Verify beneficiary details before payment." };
+      case "Fraud": return { color: "red", text: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20", icon: "✕", rec: "Do not proceed. Contact your bank immediately if this transaction was not initiated by you." };
       default: return { color: "gray", text: "text-gray-400", bg: "bg-gray-500/10", border: "border-gray-500/20", icon: "?", rec: "Unknown status." };
     }
   };
@@ -223,10 +228,15 @@ export default function UPIChecker() {
       <main className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <Link to="/" className="inline-flex items-center gap-2 text-xl font-bold text-gray-300 mb-8 hover:text-white transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 text-xl font-bold text-gray-300 mb-6 hover:text-white transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
             SentinelAI Dashboard
           </Link>
+          <div className="mb-4">
+            <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+              SENTINEL AI SUITE v1.0
+            </span>
+          </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 mb-6">
             UPI Fraud Detection Engine
           </h1>
@@ -271,7 +281,16 @@ export default function UPIChecker() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                       Transaction Date
                     </label>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-3 bg-[#0a0c12] border border-gray-700/60 rounded-xl text-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" disabled={loading} required />
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) => { setDate(e.target.value); setError(""); }}
+                      className="w-full px-4 py-3 bg-[#0a0c12] border border-gray-700/60 rounded-xl text-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                      style={{ colorScheme: "dark" }}
+                      disabled={loading}
+                      required
+                    />
+                    {!date && <p className="text-xs text-gray-500 mt-1">Select any date — past or future</p>}
                   </div>
 
                   <div>
@@ -279,7 +298,16 @@ export default function UPIChecker() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       Transaction Time
                     </label>
-                    <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full px-4 py-3 bg-[#0a0c12] border border-gray-700/60 rounded-xl text-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" disabled={loading} required />
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(e) => { setTime(e.target.value); setError(""); }}
+                      className="w-full px-4 py-3 bg-[#0a0c12] border border-gray-700/60 rounded-xl text-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                      style={{ colorScheme: "dark" }}
+                      disabled={loading}
+                      required
+                    />
+                    {!time && <p className="text-xs text-gray-500 mt-1">Select any time (00:00 – 23:59)</p>}
                   </div>
 
                   <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4 mt-2">

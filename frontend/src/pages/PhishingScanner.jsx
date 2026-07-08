@@ -82,8 +82,8 @@ export default function PhishingScanner() {
             🛡️ <span>SentinelAI</span>
           </Link>
           <div className="mb-4">
-            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase">
-              Phase 3 / 5 Completed
+            <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+              SENTINEL AI SUITE v1.0
             </span>
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">AI Phishing Detection Engine</h1>

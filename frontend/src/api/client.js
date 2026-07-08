@@ -100,4 +100,12 @@ export const scanAPI = {
   scanUPI: (data) => apiClient.post("/scan/upi", data),
 };
 
+export const historyAPI = {
+  getDashboard: () => apiClient.get("/history/dashboard"),
+  getURLHistory: (page = 1, limit = 10, classification = null) =>
+    apiClient.get("/history/url", { params: { page, limit, ...(classification ? { classification } : {}) } }),
+  getUPIHistory: (page = 1, limit = 10, classification = null) =>
+    apiClient.get("/history/upi", { params: { page, limit, ...(classification ? { classification } : {}) } }),
+};
+
 export default apiClient;

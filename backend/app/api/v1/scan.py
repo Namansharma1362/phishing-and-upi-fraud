@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
+import uuid
 
-from app.api.deps import get_current_user
-from app.db.session import get_db
+from app.api.deps import get_current_user, get_db
 from app.schemas.auth import UserProfile
 from app.schemas.scan import URLScanRequest, URLScanResponse, UPIScanRequest, UPIScanResponse, SHAPExplanation
 from app.services.url_features import URLFeatureExtractor
@@ -12,17 +12,20 @@ from app.ml.shap_explainer import SHAPExplainer
 from app.services.upi_features import UPIFeatureExtractor
 from app.ml.models.upi_model import upi_model, FRAUD_THRESHOLD
 from app.ml.shap_explainer_upi import UPISHAPExplainer
+from app.models.url_scan import URLScan
+from app.models.upi_scan import UPIScan
 
 router = APIRouter(prefix="/scan", tags=["Scanning"])
 
 @router.post("/url", response_model=URLScanResponse, summary="Scan a URL for phishing")
 async def scan_url(
     data: URLScanRequest,
-    current_user: UserProfile = Depends(get_current_user)
+    current_user: UserProfile = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ) -> URLScanResponse:
     """
     Analyzes a URL for phishing indicators using ensemble ML models and SHAP.
-    Requires authentication.
+    Requires authentication. Result is automatically saved to scan history.
     """
     # 0. Validate URL
     # We only accept fully qualified HTTP/HTTPS URLs.
@@ -64,8 +67,24 @@ async def scan_url(
         for exp in raw_explanations
     ]
 
-    # In Phase 5, we will save this result to the database linked to current_user.id
-    
+    # 5. Phase 5 — Silently persist scan result to database
+    try:
+        scan_record = URLScan(
+            id=uuid.uuid4(),
+            user_id=uuid.UUID(current_user.id),
+            url_raw=data.url,
+            url_normalized=data.url.rstrip("/").lower(),
+            verdict=classification.upper(),
+            confidence=round(risk_score, 4),
+            risk_score=int(risk_score * 100),
+            features_json=features,
+        )
+        db.add(scan_record)
+        await db.commit()
+    except Exception:
+        # Saving is a side-effect; never fail the scan response if DB write fails
+        await db.rollback()
+
     return URLScanResponse(
         url=data.url,
         risk_score=risk_score,
@@ -78,11 +97,12 @@ async def scan_url(
 @router.post("/upi", response_model=UPIScanResponse, summary="Scan a UPI ID for fraud")
 async def scan_upi(
     data: UPIScanRequest,
-    current_user: UserProfile = Depends(get_current_user)
+    current_user: UserProfile = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ) -> UPIScanResponse:
     """
     Analyzes a UPI transaction context for fraud indicators using ML models and SHAP.
-    Requires authentication.
+    Requires authentication. Result is automatically saved to scan history.
     """
     # 0. Validate Input
     if not (0 <= data.transaction_hour <= 23):
@@ -103,9 +123,17 @@ async def scan_upi(
 
     await asyncio.sleep(0.5)
 
-    # 1. Feature Extraction
+    # 1. Feature Extraction — pass all contextual signals
     features = UPIFeatureExtractor.extract_features(
-        data.upi_id, data.transaction_amount, data.is_new_beneficiary, data.transaction_hour
+        upi_id=data.upi_id,
+        amount=data.transaction_amount,
+        is_new_beneficiary=data.is_new_beneficiary,
+        hour=data.transaction_hour,
+        device_changed=data.device_changed,
+        sim_swapped=data.sim_swapped,
+        intl_login=data.intl_login,
+        transaction_type=data.transaction_type,
+        merchant_category=data.merchant_category
     )
 
     # 2. ML Prediction
@@ -126,6 +154,26 @@ async def scan_upi(
         SHAPExplanation(feature=exp["feature"], contribution=exp["contribution"])
         for exp in raw_explanations
     ]
+
+    # 5. Phase 5 — Silently persist scan result to database
+    try:
+        scan_record = UPIScan(
+            id=uuid.uuid4(),
+            user_id=uuid.UUID(current_user.id),
+            upi_id=data.upi_id,
+            amount=data.transaction_amount,
+            verdict=classification.upper(),
+            risk_score=int(risk_score * 100),
+            patterns_flagged_json={
+                "features": features,
+                "shap": [{"feature": e["feature"], "contribution": e["contribution"]} for e in raw_explanations]
+            },
+        )
+        db.add(scan_record)
+        await db.commit()
+    except Exception:
+        # Never fail the scan response if DB write fails
+        await db.rollback()
 
     return UPIScanResponse(
         upi_id=data.upi_id,

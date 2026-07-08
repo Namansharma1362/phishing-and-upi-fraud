@@ -128,9 +128,9 @@ def create_application() -> FastAPI:
     from app.api.v1 import scan as scan_router
     app.include_router(scan_router.router, prefix="/api/v1")
 
-    # Future routers (added in later phases):
-    # app.include_router(detection_router.router, prefix="/api/v1", tags=["Detection"])
-    # app.include_router(history_router.router,   prefix="/api/v1", tags=["History"])
+    # Phase 5: Scan History & Dashboard
+    from app.api.v1 import history as history_router
+    app.include_router(history_router.router, prefix="/api/v1")
 
     return app
 

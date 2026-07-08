@@ -21,6 +21,12 @@ class UPIScanRequest(BaseModel):
     transaction_amount: float
     is_new_beneficiary: bool
     transaction_hour: int
+    # Optional contextual signals — all default to safe values for backward compatibility
+    device_changed: bool = False
+    sim_swapped: bool = False
+    intl_login: bool = False
+    transaction_type: str = "Send Money"
+    merchant_category: str = "Other"
 
 class UPIScanResponse(BaseModel):
     upi_id: str
