@@ -59,9 +59,20 @@ export default function Login() {
       storeLogin(data.access_token, me);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(
-        err.response?.data?.detail || "Login failed. Please check your credentials."
-      );
+      const detail = err.response?.data?.detail;
+      let errorMsg = "Something went wrong. Please try again.";
+      
+      if (!err.response) {
+        errorMsg = "Unable to connect to server.";
+      } else if (err.response.status === 401 || err.response.status === 403) {
+        errorMsg = "Invalid email or password.";
+      } else if (Array.isArray(detail)) {
+        errorMsg = detail.map(d => d.msg).join(", ");
+      } else if (typeof detail === "string") {
+        errorMsg = detail;
+      }
+
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

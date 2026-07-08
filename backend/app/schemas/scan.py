@@ -15,3 +15,18 @@ class URLScanResponse(BaseModel):
     is_malicious: bool
     features: dict
     shap_explanations: List[SHAPExplanation]
+
+class UPIScanRequest(BaseModel):
+    upi_id: str
+    transaction_amount: float
+    is_new_beneficiary: bool
+    transaction_hour: int
+
+class UPIScanResponse(BaseModel):
+    upi_id: str
+    risk_score: float
+    classification: str
+    is_fraud: bool
+    features: dict
+    shap_explanations: List[SHAPExplanation]
+

@@ -97,6 +97,7 @@ export const authAPI = {
 
 export const scanAPI = {
   scanURL: (data) => apiClient.post("/scan/url", data),
+  scanUPI: (data) => apiClient.post("/scan/upi", data),
 };
 
 export default apiClient;
